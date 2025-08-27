@@ -1,60 +1,132 @@
 # KSITM Hackathon Project
 
-Short description
+A secure group chat application for campus with role-based access control, built with Next.js, Hono, and PostgreSQL.
 
-This repository contains the client and server for the KSITM hackathon project.
+## Features
 
-Repository layout
+- **Landing Page**: Public page with app overview and navigation
+- **Authentication**: Signup and login with JWT tokens (Access + Refresh)
+- **Role-based Access**: Support for Citizen, Officer, and Admin roles
+- **Dashboard**: Protected dashboard for authenticated users
+- **Responsive Design**: Mobile-first design with Tailwind CSS
 
-- `client/` – frontend application (see `client/README.md`)
-- `server/` – backend API (see `server/README.md`)
-- `docker-compose.yml` – optional local services (Postgres, etc.)
-- `pg_dump.sh` – database dump helper
+## Tech Stack
 
-Quick start (Linux, fish shell)
+- **Frontend**: Next.js 15 (App Router), React Query, Tailwind CSS, TypeScript
+- **Backend**: Hono, Prisma, PostgreSQL, JWT authentication
+- **Database**: PostgreSQL with Docker Compose setup
 
-1. Start the database (uses Docker Compose):
+## Quick Start
 
-```fish
-# from repository root
+### Prerequisites
+
+- Node.js 18+ or Bun
+- Docker and Docker Compose
+- Git
+
+### 1. Clone and Setup
+
+```bash
+git clone <repository-url>
+cd ksitm_hackathon
+```
+
+### 2. Start Database
+
+```bash
+# From repository root
 docker compose up -d
 ```
 
-2. Server (backend)
+### 3. Setup Backend
 
-```fish
+```bash
 cd server
-# install dependencies (bun is used in this repo)
-bun install
-# copy example env and fill values
 cp .env.example .env
-# start dev server
+# Edit .env with your database URL and JWT secrets
+bun install
 bun run dev
 ```
 
-3. Client (frontend)
+The server will start on `http://localhost:3000`
 
-```fish
+### 4. Setup Frontend
+
+```bash
 cd client
-# install dependencies (check package manager in client/package.json)
-# examples:
-# bun install
-# npm install
-# pnpm install
-# start dev server
-# bun run dev
-# npm run dev
+bun install
+bun run dev
 ```
 
-Notes
+The client will start on `http://localhost:3001`
 
-- There are VS Code tasks configured for development that may start the server and database automatically. See the VS Code Tasks panel.
-- See `server/README.md` and `client/README.md` for more details.
+## Usage
 
-Contributing
+### Authentication Flow
 
-Please open issues or pull requests. Add short, focused commits and a clear description of changes.
+1. **Landing Page**: Visit the homepage to see app overview
+2. **Signup**: Create a new account with name, email, mobile, and password
+3. **Login**: Sign in with your email and password
+4. **Dashboard**: Access protected dashboard after authentication
+5. **Logout**: Sign out and clear session
 
-License
+### API Endpoints
 
-Specify project license here.
+- `POST /auth/signup` - Create new user account
+- `POST /auth/login` - Authenticate user and receive tokens
+- `POST /auth/refresh` - Refresh access token
+- `POST /auth/logout` - Sign out and revoke tokens
+
+## Development
+
+### Available Scripts
+
+#### Server
+- `bun run dev` - Start development server with hot reload
+- `bun run build` - Build for production
+- `bun run start` - Start production server
+
+#### Client
+- `bun run dev` - Start development server
+- `bun run build` - Build for production
+- `bun run start` - Start production server
+
+### VS Code Tasks
+
+The project includes VS Code tasks for:
+- Running the development server
+- Running the client
+- Starting Docker database
+
+## Project Structure
+
+```
+├── client/                 # Next.js frontend
+│   ├── src/app/
+│   │   ├── auth/          # Authentication pages
+│   │   ├── components/    # Reusable components
+│   │   ├── dashboard/     # Protected dashboard
+│   │   ├── hooks/         # React Query hooks
+│   │   ├── providers/     # Context providers
+│   │   └── utils/         # Utilities
+├── server/                 # Hono backend
+│   ├── prisma/            # Database schema and migrations
+│   ├── src/
+│   │   ├── module/        # Feature modules
+│   │   ├── middlewares/   # Custom middlewares
+│   │   ├── shared/        # Shared utilities
+│   │   └── routes/        # Route definitions
+└── docker-compose.yml      # Database setup
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is part of the KSITM hackathon.

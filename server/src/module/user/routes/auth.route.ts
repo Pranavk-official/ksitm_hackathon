@@ -57,7 +57,11 @@ app.post("/login", rateLimit, zValidator("json", loginSchema), async (c) => {
   setCookie(c, "refreshToken", result.tokens.refreshToken, cookieOpts);
 
   const response = responder(
-    { data: { user: result.user, accessToken: result.tokens.accessToken } },
+    {
+      user: result.user,
+      accessToken: result.tokens.accessToken,
+      refreshToken: result.tokens.refreshToken,
+    },
     { message: "User logged in successfully" }
   );
   await createAudit(result.user.id, "login");
