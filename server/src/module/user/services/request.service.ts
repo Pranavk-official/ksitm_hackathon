@@ -1,5 +1,6 @@
 import prisma from "@shared/prisma";
 import { Prisma } from "@prisma/client";
+import { getFeeForService } from "@config/fees";
 
 export const createServiceRequest = async (
   userId: string,
@@ -9,10 +10,9 @@ export const createServiceRequest = async (
     feeAmount?: string | number;
   }
 ) => {
-  const fee =
-    typeof data.feeAmount === "number"
-      ? new Prisma.Decimal(data.feeAmount)
-      : new Prisma.Decimal(String(data.feeAmount ?? "0.00"));
+  // Always compute fee server-side to prevent tampering.
+  const feeValue = getFeeForService(data.serviceType);
+  const fee = new Prisma.Decimal(String(feeValue ?? "0.00"));
   const sr = await prisma.serviceRequest.create({
     data: {
       userId,

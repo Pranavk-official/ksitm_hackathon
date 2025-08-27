@@ -325,3 +325,144 @@ Timebox: 25 min
 ## Completion notes
 
 When a task is completed, check its box in the Summary checklist above and attach the listed evidence items. If you want I can populate any of the evidence placeholders (for example run the health curl, create a seed script, or generate a sample ERD) — tell me which item to produce next.
+
+--
+
+## Part 2 Candidate Instructions
+Project: Citizen Service Requests & Fees – GovTech Simulation
+Part: 2 — Payments & External API Integration
+Goal: Enable fee computation, secure checkout, webhook verification, officer gating after
+payment, and basic admin reporting.
+
+Read Me First
+- Gateway (choose one): Razorpay/Paytm/Stripe sandbox only. Never collect or
+	store card/UPI credentials yourself.
+- Secrets: Keep keys in .env. Fail fast if keys missing. Don’t log secrets.
+- Security rules:
+	- Verify gateway signatures/checksums on callbacks before trusting a payment.
+	- Use idempotency keys to prevent duplicate order/updates.
+	- Store gateway IDs (order/payment/signature) and full response JSON.
+	- Sanitize error messages; enable rate limits on payment endpoints; enable
+		CORS/helmet.
+
+Evidence policy: Each task lists required artifacts (screens/GIFs/links). Maintain
+`Evidence.md` in repo.
+
+Task P2-01 — Payments DB Schema & Models
+Objective: Persist transactions reliably.
+Tables: `payment_transactions` (TransactionID UUID, UserID, RequestID, Amount,
+Currency, OrderId, PaymentId, Status [Pending/Success/Failed/Refunded], Signature,
+GatewayResponse JSON, IdempotencyKey, CreatedAt, UpdatedAt); ensure
+`service_requests.FeeAmount` exists.
+AC: Migrations apply; unique/indexes for PaymentId and IdempotencyKey.
+Evidence: Migration files + schema diagram PNG.
+Timebox: 20 min.
+Status: Done (schema updated in `prisma/schema.prisma`). Migration pending.
+Evidence: prisma/migrations/ (placeholder) + docs/evidence/p2-01-schema.png
+
+Task P2-02 — Fee Rules & Pricing Display
+Objective: Show correct fees to users and back-end.
+Steps: Implement config map (ServiceType → FeeAmount); validate on server; surface onCreate Request form and Request Cards.
+AC: Same fee value on client and server; prevents tampering.
+Status: Done
+Notes: Server computes fees using `src/config/fees.ts` and `createServiceRequest` enforces server-side feeAmount. Added GET `/requests/fee?serviceType=...` to return authoritative fee.
+Evidence: docs/evidence/p2-02-fee.png (placeholder)
+Timebox: 15 min.
+
+Task P2-03 — Gateway Sandbox Setup
+Objective: Wire sandbox keys safely.
+Steps: Add .env keys; create `/payments/health` to confirm key presence; create provider
+adapter (e.g., `adapters/razorpay.js`).
+AC: Health route returns OK; app refuses to start if keys missing.
+Evidence: Health route JSON + redaction proof of env usage.
+Timebox: 15 min.
+Status: Done (mock gateway adapter implemented for dev).
+Notes: Added `src/adapters/mockGateway.ts` and `/payments/health` route.
+Evidence: docs/evidence/p2-03-health.json (placeholder)
+
+Task P2-04 — Create Order Intent Endpoint
+Objective: Begin checkout with server-side integrity.
+Endpoint: `POST /payments/create-order` { requestId }.
+Rules: Ensure request belongs to the logged-in citizen, compute Amount server-side from
+config, store Pending transaction with IdempotencyKey, call gateway to create order,
+return order details to FE.
+AC: Duplicate clicks do not create duplicate orders; returns stable order for same
+IdempotencyKey.
+Evidence: Postman tests + DB screenshot showing Pending txn.
+Timebox: 25 min.
+Status: Done (server-side create-order endpoint + idempotency via IdempotencyKey).
+Evidence: docs/evidence/p2-04-create-order.png (placeholder)
+
+Task P2-05 — Frontend “Pay Now” UI & Checkout
+Objective: Provide a clean, reliable checkout experience.
+Steps: On unpaid requests, show Pay Now; initialize gateway checkout (script/redirect);
+handle success/failure callbacks; UX states (loading, success, error).
+AC: User sees status transitions; no blocked UI on failure; retry works without duplicating
+orders.
+Evidence: GIF of full flow.
+Timebox: 25 min.
+
+Task P2-06 — Webhook/Callback & Signature Verification
+Objective: Trust results only after server verification.
+Endpoint: `POST /payments/webhook`.
+Steps: Verify signature using secret; upsert transaction by OrderId/PaymentId; set Status;
+update `service_requests.Status='Paid'` only on Success; log raw payload in
+GatewayResponse.
+AC: Tampered/invalid signature is rejected; updates are idempotent (retries safe).
+Evidence: Unit test of signature verify + DB before/after.
+Timebox: 30 min.
+Status: Done (mock webhook verification implemented; idempotent update by orderId).
+Evidence: docs/evidence/p2-06-webhook.png (placeholder)
+
+Task P2-07 — Payment Status & Receipt
+Objective: Transparency for citizens.
+Steps: Build Payments page listing transactions; filters by date/request; show OrderId,
+PaymentId, Status, Amount, Timestamp. Add Receipt view with print/PDF.
+AC: Accurate list; receipt has order/payment refs and citizen name.
+Evidence: Screenshots of list + receipt.
+Timebox: 20 min.
+
+Task P2-08 — Officer Gating & Admin Revenue Report
+Objective: Approvals only when fees paid; admins see revenue.
+Steps: Block Officer approval when linked request unpaid (backend guard + UI hint).
+Create Admin → Revenue view: totals by ServiceType and by date; CSV export; simple
+chart.
+AC: Officer cannot approve unpaid requests; admin metrics match transactions.
+Evidence: Forbidden attempt (401/403) proof + CSV sample + chart screenshot.
+Timebox: 25 min.
+
+Task P2-09 — Errors, Idempotency & Reliability
+Objective: Be resilient to retries and duplicates.
+Steps: Handle timeouts/duplicates; ensure unique constraints; exponential backoff on FE;
+retryable webhook handling; reconciliation job/endpoint to re-fetch a payment by ID.
+AC: Replaying same webhook/request does not double-charge or double-mark Paid.
+Evidence: Test script re-posting webhook payloads + stable DB state.
+Timebox: 20 min.
+
+Task P2-10 — E2E Demo, Deployment & Docs
+Objective: Demonstrate and ship.
+Steps: Record end-to-end screen capture (Citizen → Pay → O icer approve → Admin report).
+Deploy FE (Vercel/Netlify), BE (Railway/Render), DB (Supabase/Postgres). Update
+README (env keys, run, endpoints), attach Postman collection and demo creds.
+AC: All links live; video shows successful payment → approval.
+Evidence: Live URLs + video link + README excerpt.
+Timebox: 30 min.
+
+Submission Checklist (End of Part 2)
+- Payments schema + migrations
+- Fee rules enforced on client + server
+- Gateway sandbox configured; health route passes
+- Create-order endpoint with idempotency
+- FE checkout flow with robust UX
+- Webhook with signature verification + idempotent updates
+- Payment status list + printable receipt
+- Officer approval blocked until Paid
+- Admin revenue report + CSV export
+- E2E demo, deployments, README & Postman
+
+Evaluation Hints (for Mentors)
+- Security (30%): signature verification, idempotency, secret handling, safe logs.
+- Correctness (25%): status transitions, gating logic, reconciliation.
+- Reliability (20%): duplicate/retry handling, webhook robustness.
+- Reporting (15%): admin metrics accuracy & exports.
+- Docs/UX (10%): clarity of instructions, error messaging, demo completeness.

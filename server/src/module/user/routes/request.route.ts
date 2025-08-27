@@ -22,7 +22,7 @@ app.use("*", authMiddleware);
 app.post("/", zValidator("json", createSchema), async (c) => {
   const body: any = c.req.valid("json");
   const user = c.get("user");
-  const userId = user?.id!;
+  const userId = ((user as any)?.sub ?? (user as any)?.id) as string;
   const sr = await createServiceRequest(userId, body);
   await createAuditFromContext(c, `request:create:${sr.id}`);
   return c.json(
@@ -33,10 +33,19 @@ app.post("/", zValidator("json", createSchema), async (c) => {
 
 app.get("/me", async (c) => {
   const user = c.get("user");
-  const userId = user?.id!;
+  const userId = ((user as any)?.sub ?? (user as any)?.id) as string;
   const list = await getMyRequests(userId);
   await createAuditFromContext(c, `request:list:my`);
   return c.json(responder({ data: list }));
+});
+
+// Fee endpoint - returns authoritative fee for a serviceType
+app.get("/fee", async (c) => {
+  const serviceType = c.req.query("serviceType") || "";
+  // Lazy import to avoid cycles
+  const { getFeeForService } = await import("@config/fees");
+  const fee = getFeeForService(serviceType as string);
+  return c.json(responder({ data: { serviceType, fee } }));
 });
 
 export default app;

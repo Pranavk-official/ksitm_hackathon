@@ -7,6 +7,7 @@ import auth_routes from "@module/user/routes/auth.route";
 import admin_routes from "@module/admin/routes/admin.route";
 import officer_routes from "@module/officer/routes/officer.route";
 import request_routes from "@module/user/routes/request.route";
+import payment_routes from "@module/payments/routes/payment.route";
 import { securityHeaders } from "@middleware/security.middleware";
 
 const app = new Hono();
@@ -35,6 +36,7 @@ app.route("/auth", auth_routes);
 app.route("/admin", admin_routes);
 app.route("/officer", officer_routes);
 app.route("/requests", request_routes);
+app.route("/payments", payment_routes);
 
 app.notFound((c) => {
   throw new NotFoundError(`Route: ${c.req.path} not found`);
