@@ -30,3 +30,4 @@ app.post("/users/:id/role", async (c) => {
 });
 
 export default app;
+export type AppType = typeof app;

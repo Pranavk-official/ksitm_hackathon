@@ -75,3 +75,25 @@ Troubleshooting
 Contact
 
 For questions about the backend, talk to the backend owner or open an issue.
+
+## API Docs (OpenAPI)
+
+This project includes a config for `@rcmade/hono-docs` to generate an OpenAPI 3.0 JSON file.
+
+To generate the docs:
+
+```fish
+cd server
+# install generator (optional)
+bun add -d @rcmade/hono-docs
+bun run docs:generate
+```
+
+The generated OpenAPI JSON will be written to `openapi/openapi.json` and is served by the running server at `/docs/open-api`. A Redoc UI is available at `/docs`.
+
+If you prefer to run without installing the package, use npx from the repo root:
+
+```fish
+npx @rcmade/hono-docs generate --config ./hono-docs.ts
+```
+

@@ -1,0 +1,339 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "KSITM API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth Routes"
+    },
+    {
+      "name": "Requests"
+    },
+    {
+      "name": "Payments"
+    },
+    {
+      "name": "Admin"
+    },
+    {
+      "name": "Officer"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "summary": "Auto-generated POST /signup",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth Routes"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Auto-generated POST /login",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth Routes"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Auto-generated POST /refresh",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth Routes"
+        ]
+      }
+    },
+    "/auth/forgot": {
+      "post": {
+        "summary": "Auto-generated POST /forgot",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth Routes"
+        ]
+      }
+    },
+    "/auth/reset": {
+      "post": {
+        "summary": "Auto-generated POST /reset",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth Routes"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Auto-generated POST /logout",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth Routes"
+        ]
+      }
+    },
+    "/requests": {
+      "post": {
+        "summary": "Auto-generated POST /",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/requests/me": {
+      "get": {
+        "summary": "Auto-generated GET /me",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/requests/fee": {
+      "get": {
+        "summary": "Auto-generated GET /fee",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/payments/health": {
+      "get": {
+        "summary": "Auto-generated GET /health",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/payments/create-order": {
+      "post": {
+        "summary": "Auto-generated POST /create-order",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/payments/webhook": {
+      "post": {
+        "summary": "Auto-generated POST /webhook",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "summary": "Auto-generated GET /users",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/users/{id}/role": {
+      "post": {
+        "summary": "Auto-generated POST /users/{id}/role",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/officer/requests": {
+      "get": {
+        "summary": "Auto-generated GET /requests",
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Officer"
+        ]
+      }
+    },
+    "/officer/requests/{id}/status": {
+      "post": {
+        "summary": "Auto-generated POST /requests/{id}/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Default fallback response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "Officer"
+        ]
+      }
+    }
+  }
+}

@@ -132,3 +132,4 @@ app.post("/logout", async (c) => {
 });
 
 export default app;
+export type AppType = typeof app;
