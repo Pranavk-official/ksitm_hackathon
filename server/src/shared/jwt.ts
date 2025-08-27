@@ -7,7 +7,8 @@ const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "change-me";
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "change-me";
 
 export type JwtPayload = {
-  id: string;
+  id?: string;
+  sub?: string;
   role?: string;
   email?: string;
   mobile?: string;
@@ -46,5 +47,30 @@ export const verifyRefreshToken = (token: string): JwtPayload => {
     return (jwt as any).verify(token, REFRESH_SECRET) as JwtPayload;
   } catch (e: any) {
     throw new UnauthorizedError("Invalid refresh token");
+  }
+};
+
+// Password reset token helpers - short-lived tokens signed with a dedicated secret
+const RESET_SECRET =
+  process.env.JWT_RESET_SECRET ||
+  process.env.JWT_REFRESH_SECRET ||
+  "change-me-reset";
+const RESET_TOKEN_EXPIRES = process.env.JWT_RESET_EXPIRES || "1h";
+
+export const signResetToken = (payload: JwtPayload) => {
+  try {
+    return (jwt as any).sign(payload, RESET_SECRET, {
+      expiresIn: RESET_TOKEN_EXPIRES,
+    });
+  } catch (e: any) {
+    throw new InternalServerError("Failed to sign reset token");
+  }
+};
+
+export const verifyResetToken = (token: string): JwtPayload => {
+  try {
+    return (jwt as any).verify(token, RESET_SECRET) as JwtPayload;
+  } catch (e: any) {
+    throw new UnauthorizedError("Invalid or expired reset token");
   }
 };

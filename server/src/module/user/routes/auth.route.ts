@@ -3,33 +3,47 @@ import { Hono } from "hono";
 import { setCookie, getCookie, deleteCookie } from "hono/cookie";
 import { loginSchema, userCreateSchema } from "../models/user.model";
 import responder from "@shared/responder";
+import { createAudit } from "@shared/audit";
 import {
   createUserService,
   loginUserService,
   refreshTokenService,
-  logoutService,
 } from "../services/auth.service";
+import {
+  issuePasswordReset,
+  resetPassword,
+} from "../services/password.service";
 import { rateLimit } from "@middleware/auth.middleware";
 import { UnauthorizedError } from "@shared/error";
+import { z } from "zod";
+
+const forgotSchema = z.object({ email: z.string().email() });
+const resetSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(6),
+});
 
 const app = new Hono();
 
-// Using Hono cookie helpers (setCookie/getCookie/deleteCookie)
-
 // Sign up
-app.post("/signup", zValidator("json", userCreateSchema), async (c) => {
-  const body = c.req.valid("json");
-  const user = await createUserService(body);
-  const response = responder(
-    { data: user },
-    { message: "User created successfully" }
-  );
-  return c.json(response, 201);
-});
+app.post(
+  "/signup",
+  rateLimit,
+  zValidator("json", userCreateSchema),
+  async (c) => {
+    const body = c.req.valid("json");
+    const user = await createUserService(body);
+    await createAudit(user.id, "signup");
+    const response = responder(
+      { data: user },
+      { message: "User created successfully" }
+    );
+    return c.json(response, 201);
+  }
+);
 
 app.post("/login", rateLimit, zValidator("json", loginSchema), async (c) => {
   const body: any = c.req.valid("json");
-  console.log(body);
   const result = await loginUserService(body.email, body.password);
 
   // set refresh token as httpOnly cookie
@@ -46,6 +60,7 @@ app.post("/login", rateLimit, zValidator("json", loginSchema), async (c) => {
     { data: { user: result.user, accessToken: result.tokens.accessToken } },
     { message: "User logged in successfully" }
   );
+  await createAudit(result.user.id, "login");
   return c.json(response);
 });
 
@@ -70,20 +85,49 @@ app.post("/refresh", async (c) => {
     { data: { user: result.user, accessToken: result.tokens.accessToken } },
     { message: "Token refreshed successfully" }
   );
+  await createAudit(result.user.id, "refresh");
   return c.json(response);
 });
 
-// TODO: Forgot/Reset Password /reset and /forgot
+// Forgot/Reset implemented below
+// Forgot - issue a reset token (in dev we return token in response; in prod email it)
+app.post("/forgot", rateLimit, zValidator("json", forgotSchema), async (c) => {
+  const body: any = c.req.valid("json");
+  const result = await issuePasswordReset(body.email);
+  await createAudit(result.userId, "reset-password:issued");
+  // In dev return token for testing; in prod send via email and return 202
+  const response = responder(
+    { resetToken: result.token },
+    { message: "Password reset token issued" }
+  );
+  return c.json(response);
+});
+
+// Reset - accept token + newPassword
+app.post("/reset", zValidator("json", resetSchema), async (c) => {
+  const body: any = c.req.valid("json");
+  const res = await resetPassword(body.token, body.newPassword);
+  await createAudit(res.id, "reset-password:completed");
+  const response = responder(
+    { data: res },
+    { message: "Password reset successful" }
+  );
+  return c.json(response);
+});
 
 // Logout
 app.post("/logout", async (c) => {
+  const user = c.get("user");
+  const userId = user?.id!;
+
+  await createAudit(userId, "logout");
   // clear cookie using helper
   deleteCookie(c, "refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     path: "/",
   });
-  await logoutService();
+  // await logoutService();
   return c.json(responder({ data: null }, { message: "Logged out" }));
 });
 

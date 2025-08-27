@@ -22,8 +22,9 @@ model User {
     createdAt DateTime @default(now()) @map("CreatedAt")
 
     // back relations
-    serviceRequests ServiceRequest[]
-    auditLogs       AuditLog[]
+    serviceRequests     ServiceRequest[]
+    auditLogs           AuditLog[]
+    paymentTransactions PaymentTransaction[]
 
     @@map("users")
 }
@@ -53,6 +54,7 @@ model ServiceRequest {
     feeAmount   Decimal              @map("FeeAmount") @db.Decimal(10, 2)
     status      ServiceRequestStatus @default(PENDING) @map("Status")
     createdAt   DateTime             @default(now()) @map("CreatedAt")
+    payments    PaymentTransaction[]
 
     @@map("service_requests")
 }
@@ -72,4 +74,31 @@ enum RoleType {
     ADMIN
     OFFICER
     CITIZEN
+}
+
+enum PaymentStatus {
+    PENDING
+    SUCCESS
+    FAILED
+    REFUNDED
+}
+
+model PaymentTransaction {
+    id              String          @id @default(uuid()) @map("TransactionID")
+    user            User?           @relation(fields: [userId], references: [id])
+    userId          String?         @map("UserID")
+    request         ServiceRequest? @relation(fields: [requestId], references: [id])
+    requestId       String?         @map("RequestID")
+    amount          Decimal         @map("Amount") @db.Decimal(10, 2)
+    currency        String          @map("Currency")
+    orderId         String?         @map("OrderId")
+    paymentId       String?         @map("PaymentId")
+    status          PaymentStatus   @map("Status")
+    signature       String?         @map("Signature")
+    gatewayResponse Json?           @map("GatewayResponse")
+    idempotencyKey  String?         @map("IdempotencyKey")
+    createdAt       DateTime        @default(now()) @map("CreatedAt")
+    updatedAt       DateTime        @updatedAt @map("UpdatedAt")
+
+    @@map("payment_transactions")
 }

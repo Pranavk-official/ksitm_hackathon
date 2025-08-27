@@ -79,7 +79,59 @@ async function run() {
 	if (refresh.res.status >= 400) process.exit(1);
 	if (refresh.cookie && refresh.cookie.name) cookies[refresh.cookie.name] = refresh.cookie.value;
 
-	console.log("4) Logout (using cookie)");
+
+	// 4) Forgot password -> reset -> login with new password
+	console.log("4) Forgot password (request reset token)");
+	const forgot = await request(
+		"/auth/forgot",
+		{
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ email: user.email }),
+		},
+		{}
+	);
+	console.log("forgot status:", forgot.res.status);
+	console.log("forgot body:", forgot.body);
+	if (forgot.res.status >= 400) process.exit(1);
+
+	// In dev the token is returned in body.data.resetToken
+	const resetToken = forgot.body?.data?.resetToken;
+	if (!resetToken) {
+		console.error("No reset token returned by /auth/forgot");
+		process.exit(1);
+	}
+
+	console.log("5) Reset password (using token)");
+	const newPassword = "N3wP@ssw0rd!";
+	const reset = await request(
+		"/auth/reset",
+		{
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ token: resetToken, newPassword }),
+		},
+		{}
+	);
+	console.log("reset status:", reset.res.status);
+	console.log("reset body:", reset.body);
+	if (reset.res.status >= 400) process.exit(1);
+
+	console.log("6) Login with new password");
+	const relogin = await request(
+		"/auth/login",
+		{
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ email: user.email, password: newPassword }),
+		},
+		{}
+	);
+	console.log("relogin status:", relogin.res.status);
+	console.log("relogin body:", relogin.body);
+	if (relogin.res.status >= 400) process.exit(1);
+
+	console.log("7) Logout (using cookie)");
 	const logout = await request("/auth/logout", { method: "POST" }, cookies);
 	console.log("logout status:", logout.res.status);
 	console.log("logout body:", logout.body);
