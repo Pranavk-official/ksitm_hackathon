@@ -1,15 +1,19 @@
 {
   "compilerOptions": {
     "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "baseUrl": ".",
     "paths": {
       "@config/*": ["src/config/*"],
       "@helpers/*": ["src/helpers/*"],
-      "@middleware/*": ["src/middleware/*"],
+      "@middleware/*": ["src/middlewares/*"],
       "@module/*": ["src/module/*"],
       "@shared/*": ["src/shared/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

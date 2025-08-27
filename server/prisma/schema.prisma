@@ -29,8 +29,8 @@ model User {
 }
 
 model Role {
-    id   String @id @default(uuid()) @map("RoleID")
-    name String @unique @map("RoleName")
+    id   String   @id @default(uuid()) @map("RoleID")
+    name RoleType @unique @default(CITIZEN) @map("RoleName")
 
     users User[]
 
@@ -65,4 +65,11 @@ model AuditLog {
     timestamp DateTime @default(now()) @map("Timestamp")
 
     @@map("audit_logs")
+}
+
+// Enums
+enum RoleType {
+    ADMIN
+    OFFICER
+    CITIZEN
 }

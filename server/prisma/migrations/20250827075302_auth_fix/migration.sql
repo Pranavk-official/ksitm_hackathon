@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "public"."ServiceRequestStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'COMPLETED');
 
+-- CreateEnum
+CREATE TYPE "public"."RoleType" AS ENUM ('ADMIN', 'OFFICER', 'CITIZEN');
+
 -- CreateTable
 CREATE TABLE "public"."users" (
     "UserID" TEXT NOT NULL,
@@ -18,7 +21,7 @@ CREATE TABLE "public"."users" (
 -- CreateTable
 CREATE TABLE "public"."roles" (
     "RoleID" TEXT NOT NULL,
-    "RoleName" TEXT NOT NULL,
+    "RoleName" "public"."RoleType" NOT NULL DEFAULT 'CITIZEN',
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("RoleID")
 );

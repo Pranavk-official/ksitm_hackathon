@@ -74,18 +74,18 @@ Required tables (schema):
 
 Steps:
 
-- [ ] Create Prisma / SQL migrations for the tables above.
-- [ ] Generate an ERD diagram and commit to `/docs/`.
+- [X] Create Prisma / SQL migrations for the tables above.
+- [X] Generate an ERD diagram and commit to `/docs/`.
 
 Acceptance Criteria (AC):
 
-- [ ] Migrations apply cleanly (no errors).
-- [ ] ERD PNG committed to `/docs/`.
+- [X] Migrations apply cleanly (no errors).
+- [X] ERD PNG committed to `/docs/`.
 
 Evidence required:
 
-- [ ] Migration files in `prisma/migrations/` (or `migrations/` folder) — list filenames
-- [ ] ERD image `docs/erd.png` (or `docs/ERD-<timestamp>.png`)
+- [X] Migration files in `prisma/migrations/` (or `migrations/` folder) — list filenames
+- [X] ERD image `docs/erd.png` (or `docs/ERD-<timestamp>.png`)
 
 Timebox: 25 min
 
@@ -106,18 +106,18 @@ Objective: Guarantee initial access paths.
 
 Steps:
 
-- [ ] Seed roles: `Admin`, `Officer`, `Citizen`.
-- [ ] Create one demo Admin user (seed script or migration seed).
+- [X] Seed roles: `Admin`, `Officer`, `Citizen`.
+- [X] Create one demo Admin user (seed script or migration seed).
 
 Acceptance Criteria (AC):
 
-- [ ] DB shows all 3 roles.
-- [ ] Admin can log in (credential details recorded in evidence, not plaintext in repo).
+- [X] DB shows all 3 roles.
+- [X] Admin can log in (credential details recorded in evidence, not plaintext in repo).
 
 Evidence required:
 
-- [ ] SQL/seed script committed (e.g. `prisma/seed.ts` or `scripts/seed.sql`).
-- [ ] Screenshot or terminal output showing seed run and inserted rows.
+- [X] SQL/seed script committed (e.g. `prisma/seed.ts` or `scripts/seed.sql`).
+- [X] Screenshot or terminal output showing seed run and inserted rows.
 
 Timebox: 10 min
 

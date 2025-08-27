@@ -12,6 +12,16 @@
       }
     },
     {
+      "label": "Run client",
+      "type": "shell",
+      "command": "cd client && bun run dev",
+      "group": "build",
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
       "label": "Start Docker DB",
       "type": "shell",
       "command": "docker compose -f docker-compose.yml up",
